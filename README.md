@@ -9,20 +9,22 @@ A go web scraping framework using json configuration and other customizations to
     "levels": [
         {
             "source": "https://mangapill.com/manga/2/one-piece",
-            "label": "chapter",
+            "label": "manga",
             "save": {
                 "type": "directory",
                 "name": "Chapter %name%",
                 "path": "/"
             },
-            "variables": {
-                "name": {
-                    "selector": "custom",
-                    "value": "chapter_name_parser"
-                },
-                "url": {
-                    "selector": "custom",
-                    "value": "chapter_url_selector"
+            "objects": {
+                "chapter": {
+                    "name": {
+                        "selector": "custom",
+                        "value": "chapter_name_parser"
+                    },
+                    "url": {
+                        "selector": "custom",
+                        "value": "chapter_url_selector"
+                    }
                 }
             },
             "sort": {
@@ -31,8 +33,8 @@ A go web scraping framework using json configuration and other customizations to
             },
             "levels": [
                 {
-                    "source": "%parent.url%",
-                    "label": "image",
+                    "source": "%parent.chapter.url%",
+                    "label": "chapter",
                     "save": {
                         "type": "file",
                         "name": "%counter%.jpg",
@@ -55,7 +57,7 @@ For example, if you want to fetch a chapter in a manga, there would be a single 
 For each level, do the following:
 
 1. Fetch data from `source`
-2.
+2. Parse variables to
 
 The `sort` attribute is applied after fetching all the `variables` from the source.
 

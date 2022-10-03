@@ -2,6 +2,7 @@ package reader
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 )
@@ -11,17 +12,29 @@ type Levels struct {
 }
 
 type Level struct {
-	Source     string              `json:"source"`
-	Label      string              `json:"label"`
-	NameFormat string              `json:"name_format"`
-	SaveAs     string              `json:"save_as"`
-	Variables  map[string]Variable `json:"variables"`
-	Sort       Sort                `json:"sort"`
-	Levels     []Level             `json:"levels"`
+	Source  string                `json:"source"`
+	Label   string                `json:"label"`
+	Save    Save                  `json:"save"`
+	Objects map[string]ObjectData `json:"objects"`
+	Sort    Sort                  `json:"sort"`
+	Levels  []Level               `json:"levels"`
+}
+
+type Save struct {
+	Type    string `json:"type"`
+	Name    string `json:"name"`
+	Path    string `json:"path"`
+	Content string `json:"content"`
+}
+
+type ObjectData struct {
+	Data Variable `json:"data"`
+	Sort Sort     `json:"sort"`
 }
 
 type Variable struct {
 	Selector string
+	Struct   string
 	Value    string
 }
 
@@ -29,6 +42,8 @@ type Sort struct {
 	By    string
 	Order string
 }
+
+const CUSTOM = "custom"
 
 func Read() Levels {
 	file, err := os.Open("input/input.json")
@@ -44,5 +59,9 @@ func Read() Levels {
 	objects := new(Levels)
 	json.Unmarshal(fileContents, objects)
 
+	fmt.Printf("%+v\n", objects)
+
 	return *objects
 }
+
+// func Resolve(name string, data datasink.LevelData) string
