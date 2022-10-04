@@ -2,7 +2,6 @@ package reader
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"regexp"
@@ -97,7 +96,8 @@ func ResolveValue(resolve Resolve, data *datasink.LevelData) (string, error) {
 		r := regexp.MustCompile(`%([^%]*)%`)
 		result = r.ReplaceAllStringFunc(resolve.Content, func(find string) string {
 			input := find[1 : len(find)-1]
-			fmt.Println(input)
+
+			datasink.FindValue(input, data)
 			return input
 		})
 	}

@@ -11,10 +11,6 @@ import (
 
 func Process(objects []reader.Level, levelData *datasink.LevelData) {
 	for _, level := range objects {
-		// fmt.Printf("Level label: %v\n", level.Label)
-
-		// todo: Resolve source if starts with %
-
 		// Fetch source content
 		sourceUrl, err := reader.ResolveValue(level.Source, levelData)
 		if err != nil {
@@ -39,6 +35,10 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 					log.Println(err)
 					continue
 				}
+
+				// for _, objeactData := range result[objName].Content {
+
+				// }
 			}
 		}
 

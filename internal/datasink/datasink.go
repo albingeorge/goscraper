@@ -9,6 +9,8 @@ import (
 type LevelData struct {
 	ParentData *LevelData
 
+	CurrentObjectContent *ObjectContent
+
 	// Data fetched for each object
 	// We do processing of child levels based on these objects
 	// Key is the object name and value is the list of data fetched for each object
@@ -19,26 +21,33 @@ type LevelData struct {
 }
 
 type Object struct {
-	ParentObject *Object
-	Content      []*ObjectContent
+	Content []*ObjectContent
 }
 
 type ObjectContent map[string]interface{}
 
 // Find the value for a dotted notation input string from the datasink object
-func FindValue(input string, obj Object) (string, error) {
+func FindValue(input string, levelData *LevelData) (interface{}, error) {
 	sections := strings.Split(input, ".")
+
+	if len(sections) != 2 {
+		return "", errors.New("invalid format for input: " + input)
+	}
+
+	obj := levelData.CurrentObjectContent
 
 	// Resolve which level the data is to be fetched from
 	if sections[0] == "parent" {
-		obj = *obj.ParentObject
+		if levelData.ParentData == nil {
+			return "", errors.New("no parent content available for this level")
+		}
+
+		obj = levelData.ParentData.CurrentObjectContent
 	}
 
-	// objData := []Object{}
-	// // Resolve the object
-	// if objData, ok := sink.Objects[sections[1]]; ok {
+	if val, ok := (*obj)[sections[1]]; ok {
+		return val, nil
+	}
 
-	// }
-
-	return "", errors.New("unable to find value in leveldata")
+	return "", errors.New("unable to find value in ObjectContent")
 }

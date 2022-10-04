@@ -54,14 +54,14 @@ func (m *Mangapill) chapterParser(doc *goquery.Document) datasink.Object {
 		})
 		count++
 
-		return count <= 10
+		return count <= 4
 	})
 
-	// doc.Find("#chapters a").EachWithBreak(func(i int, s *goquery.Selection) {
+	// doc.Find("#chapters a").Each(func(i int, s *goquery.Selection) {
 	// 	attrVal, _ := s.Attr("href")
-	// 	res = append(res, Chapter{
-	// 		Name: s.Text(),
-	// 		Url:  attrVal,
+	// 	res.Content = append(res.Content, &datasink.ObjectContent{
+	// 		"name": s.Text(),
+	// 		"url":  attrVal,
 	// 	})
 	// })
 
