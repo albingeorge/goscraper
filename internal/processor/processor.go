@@ -22,7 +22,7 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 			log.Println(err)
 		}
 
-		result := map[string][]map[string]interface{}{}
+		result := map[string][]datasink.Object{}
 
 		// Parse source content
 		for objName, obj := range level.Objects {
@@ -36,13 +36,15 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 		}
 
 		// Set child data for processing down the line
-		levelData.ChildData = &datasink.LevelData{
-			Objects: result,
-		}
+		levelData.Objects = result
 
 		// Handle data storage
-		storage.Store(level.Save)
+		storage.Store(level.Save, result)
 
 		// If child levels exist, call Process on the same
+		// To be passed to child level processes
+		// childData := datasink.LevelData{
+		// 	ParentData: levelData,
+		// }
 	}
 }

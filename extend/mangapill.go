@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/reader"
 )
 
 type Mangapill struct {
-	chapters []map[string]interface{}
+	chapters []datasink.Object
 }
 
 func (m *Mangapill) Run(doc *goquery.Document, fnName string) error {
@@ -29,12 +30,12 @@ func (m *Mangapill) Sort(s reader.Sort) {
 	})
 }
 
-func (m *Mangapill) GetContent() []map[string]interface{} {
+func (m *Mangapill) GetContent() []datasink.Object {
 	return m.chapters
 }
 
-func (m *Mangapill) chapterParser(doc *goquery.Document) []map[string]interface{} {
-	res := []map[string]interface{}{}
+func (m *Mangapill) chapterParser(doc *goquery.Document) []datasink.Object {
+	res := []datasink.Object{}
 
 	count := 1
 
@@ -42,7 +43,7 @@ func (m *Mangapill) chapterParser(doc *goquery.Document) []map[string]interface{
 	doc.Find("#chapters a").EachWithBreak(func(i int, s *goquery.Selection) bool {
 		attrVal, _ := s.Attr("href")
 
-		res = append(res, map[string]interface{}{
+		res = append(res, datasink.Object{
 			"name": s.Text(),
 			"url":  attrVal,
 		})

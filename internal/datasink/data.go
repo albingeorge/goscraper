@@ -1,7 +1,7 @@
 package datasink
 
 type LevelData struct {
-	ChildData *LevelData
+	ParentData *LevelData
 
 	// Data fetched for each object
 	// We do processing of child levels based on these objects
@@ -9,5 +9,7 @@ type LevelData struct {
 	// For example:
 	// Key: "chapter"
 	// Value: List of chapter data(which in and of itself will have map[string]interface{})
-	Objects map[string][]map[string]interface{}
+	Objects map[string][]Object
 }
+
+type Object map[string]interface{}

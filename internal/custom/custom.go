@@ -7,6 +7,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/albingeorge/goscraper/extend"
+	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/reader"
 )
 
@@ -18,10 +19,10 @@ type Custom interface {
 
 	// Fetches content data for each object.
 	// Each datum can be a key value map with value of type interface{}
-	GetContent() []map[string]interface{}
+	GetContent() []datasink.Object
 }
 
-func Call(doc *goquery.Document, objectData reader.ObjectData) ([]map[string]interface{}, error) {
+func Call(doc *goquery.Document, objectData reader.ObjectData) ([]datasink.Object, error) {
 	obj, err := getCustomObject(objectData.Parser)
 
 	if err != nil {
