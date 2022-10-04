@@ -7,7 +7,6 @@ import (
 	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/httphandler"
 	"github.com/albingeorge/goscraper/internal/reader"
-	"github.com/albingeorge/goscraper/internal/storage"
 )
 
 func Process(objects []reader.Level, levelData *datasink.LevelData) {
@@ -17,12 +16,19 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 		// todo: Resolve source if starts with %
 
 		// Fetch source content
-		doc, err := httphandler.GetDocument(level.Source)
+		sourceUrl, err := reader.ResolveValue(level.Source, levelData)
 		if err != nil {
 			log.Println(err)
+			continue
 		}
 
-		result := map[string][]datasink.Object{}
+		doc, err := httphandler.GetDocument(sourceUrl)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		result := map[string]datasink.Object{}
 
 		// Parse source content
 		for objName, obj := range level.Objects {
@@ -31,6 +37,7 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 
 				if err != nil {
 					log.Println(err)
+					continue
 				}
 			}
 		}
@@ -39,7 +46,7 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 		levelData.Objects = result
 
 		// Handle data storage
-		storage.Store(level.Save, result)
+		// storage.Store(level.Save, result)
 
 		// If child levels exist, call Process on the same
 		// To be passed to child level processes

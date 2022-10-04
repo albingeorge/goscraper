@@ -19,23 +19,23 @@ type Custom interface {
 
 	// Fetches content data for each object.
 	// Each datum can be a key value map with value of type interface{}
-	GetContent() []datasink.Object
+	GetContent() datasink.Object
 }
 
-func Call(doc *goquery.Document, objectData reader.ObjectData) ([]datasink.Object, error) {
+func Call(doc *goquery.Document, objectData reader.ObjectData) (datasink.Object, error) {
 	obj, err := getCustomObject(objectData.Parser)
 
 	if err != nil {
-		return nil, err
+		return datasink.Object{}, err
 	}
 
 	err = obj.Run(doc, objectData.Parser.Value)
 
-	obj.Sort(objectData.Sort)
-
 	if err != nil {
-		return nil, err
+		return datasink.Object{}, err
 	}
+
+	obj.Sort(objectData.Sort)
 
 	res := obj.GetContent()
 
