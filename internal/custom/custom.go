@@ -1,6 +1,7 @@
 package custom
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -11,20 +12,25 @@ import (
 
 type Custom interface {
 	Run(doc *goquery.Document, fnName string) error
+
+	// Sorts the content data for the current object
 	Sort(reader.Sort)
-	GetContent() interface{}
+
+	// Fetches content data for each object.
+	// Each datum can be a key value map with value of type interface{}
+	GetContent() []map[string]interface{}
 }
 
-func Call(doc *goquery.Document, v reader.Variable, sort reader.Sort) (interface{}, error) {
-	obj, err := getCustomObject(v)
+func Call(doc *goquery.Document, objectData reader.ObjectData) ([]map[string]interface{}, error) {
+	obj, err := getCustomObject(objectData.Parser)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = obj.Run(doc, v.Value)
+	err = obj.Run(doc, objectData.Parser.Value)
 
-	obj.Sort(sort)
+	obj.Sort(objectData.Sort)
 
 	if err != nil {
 		return nil, err
@@ -32,13 +38,15 @@ func Call(doc *goquery.Document, v reader.Variable, sort reader.Sort) (interface
 
 	res := obj.GetContent()
 
-	fmt.Println("Result parsed")
-	fmt.Println(res)
+	// Print result
+	fmt.Println("Parsed result")
+	marshalledText, _ := json.MarshalIndent(res, "", " ")
+	fmt.Println(string(marshalledText))
 
 	return res, nil
 }
 
-func getCustomObject(variable reader.Variable) (Custom, error) {
+func getCustomObject(variable reader.Parser) (Custom, error) {
 	if variable.Struct == "mangapill" {
 		return &extend.Mangapill{}, nil
 	}

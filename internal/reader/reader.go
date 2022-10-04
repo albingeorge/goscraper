@@ -2,7 +2,6 @@ package reader
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 )
@@ -28,11 +27,11 @@ type Save struct {
 }
 
 type ObjectData struct {
-	Data Variable `json:"data"`
-	Sort Sort     `json:"sort"`
+	Parser Parser `json:"parser"`
+	Sort   Sort   `json:"sort"`
 }
 
-type Variable struct {
+type Parser struct {
 	Selector string
 	Struct   string
 	Value    string
@@ -59,7 +58,7 @@ func Read() Levels {
 	objects := new(Levels)
 	json.Unmarshal(fileContents, objects)
 
-	fmt.Printf("%+v\n", objects)
+	// fmt.Printf("%+v\n", objects)
 
 	return *objects
 }

@@ -8,5 +8,5 @@ import (
 
 func main() {
 	objects := reader.Read()
-	processor.Process(objects.Levels, datasink.LevelData{})
+	processor.Process(objects.Levels, &datasink.LevelData{})
 }
