@@ -21,7 +21,7 @@
                         "type": "directory",
                         "name": {
                             "type": "resolve",
-                            "content": "%current.name%"
+                            "content": "OnePiece/%current.name%"
                         },
                         "path": "/"
                     },
@@ -29,7 +29,7 @@
                         {
                             "source": {
                                 "type": "resolve",
-                                "content": "%parent.url%"
+                                "content": "https://mangapill.com%parent.url%"
                             },
                             "label": "pages",
                             "objects": {
@@ -51,7 +51,7 @@
                                         },
                                         "path": {
                                             "type": "resolve",
-                                            "content": "%parent.name%/"
+                                            "content": "OnePiece/%parent.name%/"
                                         },
                                         "parser": {
                                             "selector": "custom",

@@ -8,6 +8,7 @@ import (
 	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/httphandler"
 	"github.com/albingeorge/goscraper/internal/reader"
+	"github.com/albingeorge/goscraper/internal/storage"
 )
 
 func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
@@ -47,7 +48,8 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 						CurrentObjectContent: objeactData,
 					}
 
-					// fmt.Println(obj)
+					storage.Store(obj.Save, &childLevelData)
+
 					// Call child process
 					Process(obj.Levels, &childLevelData)
 				}

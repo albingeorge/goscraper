@@ -68,6 +68,10 @@ const CUSTOM = "custom"
 
 const RESOLVE_TYPE = "resolve"
 
+const STORAGE_DIRECTORY = "directory"
+
+const STORAGE_FILE = "file"
+
 // Handles read of in the input config file
 // Reads from input/input.json
 func Read() Levels {
