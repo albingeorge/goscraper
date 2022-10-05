@@ -1,8 +1,11 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
@@ -33,7 +36,42 @@ func Store(save reader.Save, levelData *datasink.LevelData) {
 		if err != nil {
 			fmt.Println("File name resolve failure")
 		}
-		fmt.Println(pathToSave)
-		fmt.Println(fileName)
+
+		pathToSave += fileName
+
+		url, err := reader.ResolveValue(save.Content, levelData)
+		if err != nil {
+			fmt.Println("Download url resolve failure")
+		}
+
+		err = download(url, pathToSave)
+		if err != nil {
+			fmt.Println("download failure: ", err)
+		}
 	}
+}
+
+func download(url string, filename string) error {
+	response, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		return errors.New("received non-200 response code")
+	}
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
