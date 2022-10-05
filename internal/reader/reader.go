@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 	"regexp"
+	"strconv"
 
 	"github.com/albingeorge/goscraper/internal/datasink"
 )
@@ -56,7 +58,7 @@ type Save struct {
 	Type    string  `json:"type"`
 	Name    Resolve `json:"name"`
 	Path    string  `json:"path"`
-	Content string  `json:"content"`
+	Content Resolve `json:"content"`
 }
 
 type Resolve struct {
@@ -109,6 +111,13 @@ func ResolveValue(resolve Resolve, currentObjectContent datasink.ObjectContent, 
 				// Log error
 				fmt.Println("error: ", err)
 				return ""
+			}
+
+			resValue := reflect.ValueOf(res)
+
+			switch resValue.Kind() {
+			case reflect.Int:
+				return strconv.Itoa(res.(int))
 			}
 
 			return res.(string)

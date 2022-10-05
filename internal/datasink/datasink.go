@@ -55,5 +55,5 @@ func FindValue(input string, currentObjectContent ObjectContent, levelData *Leve
 		return val, nil
 	}
 
-	return "", errors.New("unable to find value in ObjectContentin " + sections[0])
+	return "", errors.New("unable to find value in ObjectContent in " + sections[0])
 }
