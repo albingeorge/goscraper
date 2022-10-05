@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/albingeorge/goscraper/internal/custom"
@@ -9,10 +10,14 @@ import (
 	"github.com/albingeorge/goscraper/internal/reader"
 )
 
-func Process(objects []reader.Level, levelData *datasink.LevelData) {
-	for _, level := range objects {
+func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
+	for _, level := range configLevels {
+		fmt.Println("Processing level: ", level.Label)
+
 		// Fetch source content
-		sourceUrl, err := reader.ResolveValue(level.Source, levelData)
+		// We have not processed current object content here, hence passing nil
+		sourceUrl, err := reader.ResolveValue(level.Source, nil, dsLevelData)
+
 		if err != nil {
 			log.Println(err)
 			continue
@@ -36,14 +41,21 @@ func Process(objects []reader.Level, levelData *datasink.LevelData) {
 					continue
 				}
 
-				// for _, objeactData := range result[objName].Content {
+				for _, objeactData := range result[objName].Content {
+					childLevelData := datasink.LevelData{
+						ParentData:           dsLevelData,
+						CurrentObjectContent: objeactData,
+					}
 
-				// }
+					// fmt.Println(obj)
+					// Call child process
+					Process(obj.Levels, &childLevelData)
+				}
 			}
 		}
 
 		// Set child data for processing down the line
-		levelData.Objects = result
+		dsLevelData.Objects = result
 
 		// Handle data storage
 		// storage.Store(level.Save, result)

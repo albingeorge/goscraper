@@ -27,14 +27,14 @@ type Object struct {
 type ObjectContent map[string]interface{}
 
 // Find the value for a dotted notation input string from the datasink object
-func FindValue(input string, levelData *LevelData) (interface{}, error) {
+func FindValue(input string, currentObjectContent ObjectContent, levelData *LevelData) (interface{}, error) {
 	sections := strings.Split(input, ".")
 
 	if len(sections) != 2 {
 		return "", errors.New("invalid format for input: " + input)
 	}
 
-	obj := levelData.CurrentObjectContent
+	obj := currentObjectContent
 
 	// Resolve which level the data is to be fetched from
 	if sections[0] == "parent" {
@@ -42,12 +42,18 @@ func FindValue(input string, levelData *LevelData) (interface{}, error) {
 			return "", errors.New("no parent content available for this level")
 		}
 
-		obj = levelData.ParentData.CurrentObjectContent
+		if levelData.CurrentObjectContent != nil {
+			obj = *levelData.CurrentObjectContent
+		}
 	}
 
-	if val, ok := (*obj)[sections[1]]; ok {
+	if obj == nil {
+		return "", errors.New("unable to find value ObjectContent in " + sections[0])
+	}
+
+	if val, ok := obj[sections[1]]; ok {
 		return val, nil
 	}
 
-	return "", errors.New("unable to find value in ObjectContent")
+	return "", errors.New("unable to find value in ObjectContentin " + sections[0])
 }
