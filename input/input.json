@@ -1,0 +1,70 @@
+{
+    "levels": [
+        {
+            "source": {
+                "type": "default",
+                "content": "https://mangapill.com/manga/2/one-piece"
+            },
+            "label": "chapter",
+            "objects": {
+                "chapter": {
+                    "parser": {
+                        "selector": "custom",
+                        "struct": "mangapill",
+                        "value": "chapter_parser"
+                    },
+                    "sort": {
+                        "by": "name",
+                        "order": "asc"
+                    },
+                    "save": {
+                        "type": "directory",
+                        "name": {
+                            "type": "resolve",
+                            "content": "%current.name%"
+                        },
+                        "path": "/"
+                    },
+                    "levels": [
+                        {
+                            "source": {
+                                "type": "resolve",
+                                "content": "%parent.url%"
+                            },
+                            "label": "pages",
+                            "objects": {
+                                "page": {
+                                    "parser": {
+                                        "selector": "custom",
+                                        "struct": "mangapill",
+                                        "value": "page_parser"
+                                    },
+                                    "sort": {
+                                        "by": "number",
+                                        "order": "asc"
+                                    },
+                                    "save": {
+                                        "type": "file",
+                                        "name": {
+                                            "type": "resolve",
+                                            "content": "%current.number%.jpg"
+                                        },
+                                        "path": {
+                                            "type": "resolve",
+                                            "content": "%parent.name%/"
+                                        },
+                                        "parser": {
+                                            "selector": "custom",
+                                            "struct": "mangapill",
+                                            "value": "file_content_parser"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
