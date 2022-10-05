@@ -15,7 +15,7 @@ const BASE = "./output"
 const PATH_SEPARATOR = "/"
 
 func Store(save reader.Save, levelData *datasink.LevelData) {
-	pathToSave, err := reader.ResolveValue(save.Name, *levelData.CurrentObjectContent, levelData)
+	pathToSave, err := reader.ResolveValue(save.Path, *levelData.CurrentObjectContent, levelData)
 	if err != nil {
 		fmt.Println("Storage path resolve failure")
 	}

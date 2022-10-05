@@ -57,7 +57,7 @@ type Sort struct {
 type Save struct {
 	Type    string  `json:"type"`
 	Name    Resolve `json:"name"`
-	Path    string  `json:"path"`
+	Path    Resolve `json:"path"`
 	Content Resolve `json:"content"`
 }
 

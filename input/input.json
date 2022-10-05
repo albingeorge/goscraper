@@ -19,11 +19,10 @@
                     },
                     "save": {
                         "type": "directory",
-                        "name": {
+                        "path": {
                             "type": "resolve",
                             "content": "OnePiece/%current.name%"
-                        },
-                        "path": "/"
+                        }
                     },
                     "levels": [
                         {
