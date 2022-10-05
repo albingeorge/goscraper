@@ -40,23 +40,22 @@
                                         "value": "page_parser"
                                     },
                                     "sort": {
-                                        "by": "number",
+                                        "by": "page_number",
                                         "order": "asc"
                                     },
                                     "save": {
                                         "type": "file",
                                         "name": {
                                             "type": "resolve",
-                                            "content": "%current.number%.jpg"
+                                            "content": "%current.name%.jpg"
                                         },
                                         "path": {
                                             "type": "resolve",
                                             "content": "OnePiece/%parent.name%/"
                                         },
-                                        "parser": {
-                                            "selector": "custom",
-                                            "struct": "mangapill",
-                                            "value": "file_content_parser"
+                                        "content": {
+                                            "type": "resolve",
+                                            "content": "%current.src%"
                                         }
                                     }
                                 }
