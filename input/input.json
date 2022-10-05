@@ -22,7 +22,8 @@
                         "path": {
                             "type": "resolve",
                             "content": "OnePiece/%current.name%"
-                        }
+                        },
+                        "skipIfExists": true
                     },
                     "levels": [
                         {

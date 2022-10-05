@@ -17,13 +17,21 @@ const BASE = "./output"
 
 const PATH_SEPARATOR = "/"
 
-func Store(save reader.Save, levelData *datasink.LevelData) {
+// Stores the data fetched for each object content
+// Returns bool representing whether the data is already stored
+func Store(save reader.Save, levelData *datasink.LevelData) bool {
 	pathToSave, err := reader.ResolveValue(save.Path, levelData)
 	if err != nil {
 		fmt.Println("Storage path resolve failure")
 	}
 
 	pathToSave = strings.Join([]string{BASE, pathToSave}, PATH_SEPARATOR)
+
+	if save.Type == reader.STORAGE_DIRECTORY {
+		if _, err := os.Stat(pathToSave); !os.IsNotExist(err) {
+			return true
+		}
+	}
 
 	err = os.MkdirAll(pathToSave, os.ModePerm)
 
@@ -44,11 +52,16 @@ func Store(save reader.Save, levelData *datasink.LevelData) {
 			fmt.Println("Download url resolve failure")
 		}
 
+		if _, err := os.Stat(pathToSave); !os.IsNotExist(err) {
+			return true
+		}
+
 		err = download(url, pathToSave)
 		if err != nil {
 			fmt.Println("download failure: ", err)
 		}
 	}
+	return false
 }
 
 func download(url string, filename string) error {

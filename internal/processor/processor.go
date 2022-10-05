@@ -48,7 +48,11 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 						CurrentObjectContent: objeactData,
 					}
 
-					storage.Store(obj.Save, &childLevelData)
+					// Don't process child entries of the current object
+					// if the data is already stored and SkipIfExists is set to true
+					if storage.Store(obj.Save, &childLevelData) && obj.Save.SkipIfExists {
+						continue
+					}
 
 					// Call child process
 					Process(obj.Levels, &childLevelData)

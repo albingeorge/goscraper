@@ -55,10 +55,11 @@ type Sort struct {
 // and for each page of a chapter, we will have to download the file content
 // from the image URL.
 type Save struct {
-	Type    string  `json:"type"`
-	Name    Resolve `json:"name"`
-	Path    Resolve `json:"path"`
-	Content Resolve `json:"content"`
+	Type         string  `json:"type"`
+	Name         Resolve `json:"name"`
+	Path         Resolve `json:"path"`
+	Content      Resolve `json:"content"`
+	SkipIfExists bool    `json:"skipIfExists"`
 }
 
 type Resolve struct {
