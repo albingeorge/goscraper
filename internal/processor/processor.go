@@ -17,7 +17,7 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 
 		// Fetch source content
 		// We have not processed current object content here, hence passing nil
-		sourceUrl, err := reader.ResolveValue(level.Source, nil, dsLevelData)
+		sourceUrl, err := reader.ResolveValue(level.Source, dsLevelData)
 
 		if err != nil {
 			log.Println(err)

@@ -96,7 +96,7 @@ func Read() Levels {
 }
 
 // Resolve a value
-func ResolveValue(resolve Resolve, currentObjectContent datasink.ObjectContent, data *datasink.LevelData) (string, error) {
+func ResolveValue(resolve Resolve, data *datasink.LevelData) (string, error) {
 	result := resolve.Content
 
 	if resolve.Type == RESOLVE_TYPE {
@@ -105,7 +105,7 @@ func ResolveValue(resolve Resolve, currentObjectContent datasink.ObjectContent, 
 		result = r.ReplaceAllStringFunc(resolve.Content, func(find string) string {
 			input := find[1 : len(find)-1]
 
-			res, err := datasink.FindValue(input, currentObjectContent, data)
+			res, err := datasink.FindValue(input, data)
 
 			if err != nil {
 				// Log error
