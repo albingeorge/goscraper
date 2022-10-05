@@ -65,7 +65,8 @@ func (m *Mangapill) chapterParser(doc *goquery.Document) datasink.Object {
 			"url":  attrVal,
 		})
 
-		return i != 1
+		// return i != 1
+		return true
 	})
 
 	// doc.Find("#chapters a").Each(func(i int, s *goquery.Selection) {
@@ -94,7 +95,8 @@ func (m *Mangapill) pageParser(doc *goquery.Document) datasink.Object {
 		})
 
 		// Remove later
-		return i != 1
+		// return i != 1
+		return true
 	})
 
 	return res
