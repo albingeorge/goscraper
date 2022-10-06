@@ -41,35 +41,23 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 					log.Println(err)
 					continue
 				}
+			}
 
-				for _, objeactData := range result[objName].Content {
-					childLevelData := datasink.LevelData{
-						ParentData:           dsLevelData,
-						CurrentObjectContent: objeactData,
-					}
-
-					// Don't process child entries of the current object
-					// if the data is already stored and SkipIfExists is set to true
-					if storage.Store(obj.Save, &childLevelData) && obj.Save.SkipIfExists {
-						continue
-					}
-
-					// Call child process
-					Process(obj.Levels, &childLevelData)
+			for _, objeactData := range result[objName].Content {
+				childLevelData := datasink.LevelData{
+					ParentData:           dsLevelData,
+					CurrentObjectContent: objeactData,
 				}
+
+				// Don't process child entries of the current object
+				// if the data is already stored and SkipIfExists is set to true
+				if storage.Store(obj.Save, &childLevelData) && obj.Save.SkipIfExists {
+					continue
+				}
+
+				// Call child process
+				Process(obj.Levels, &childLevelData)
 			}
 		}
-
-		// Set child data for processing down the line
-		dsLevelData.Objects = result
-
-		// Handle data storage
-		// storage.Store(level.Save, result)
-
-		// If child levels exist, call Process on the same
-		// To be passed to child level processes
-		// childData := datasink.LevelData{
-		// 	ParentData: levelData,
-		// }
 	}
 }
