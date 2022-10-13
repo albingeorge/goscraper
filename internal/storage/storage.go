@@ -2,7 +2,6 @@ package storage
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -20,9 +19,10 @@ const PATH_SEPARATOR = "/"
 // Stores the data fetched for each object content
 // Returns bool representing whether the data is already stored
 func Store(save reader.Save, levelData *datasink.LevelData) bool {
+	log.Println("Storing data in: ", save.Type)
 	pathToSave, err := reader.ResolveValue(save.Path, levelData)
 	if err != nil {
-		fmt.Println("Storage path resolve failure")
+		log.Println("Storage path resolve failure")
 	}
 
 	pathToSave = strings.Join([]string{BASE, pathToSave}, PATH_SEPARATOR)
@@ -42,14 +42,14 @@ func Store(save reader.Save, levelData *datasink.LevelData) bool {
 	if save.Type == reader.STORAGE_FILE {
 		fileName, err := reader.ResolveValue(save.Name, levelData)
 		if err != nil {
-			fmt.Println("File name resolve failure")
+			log.Println("File name resolve failure")
 		}
 
 		pathToSave += fileName
 
 		url, err := reader.ResolveValue(save.Content, levelData)
 		if err != nil {
-			fmt.Println("Download url resolve failure")
+			log.Println("Download url resolve failure")
 		}
 
 		if _, err := os.Stat(pathToSave); !os.IsNotExist(err) {
@@ -58,7 +58,7 @@ func Store(save reader.Save, levelData *datasink.LevelData) bool {
 
 		err = download(url, pathToSave)
 		if err != nil {
-			fmt.Println("download failure: ", err)
+			log.Println("download failure: ", err)
 		}
 	}
 	return false

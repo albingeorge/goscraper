@@ -2,8 +2,8 @@ package reader
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"os"
 	"reflect"
 	"regexp"
@@ -91,7 +91,7 @@ func Read() Levels {
 	objects := new(Levels)
 	json.Unmarshal(fileContents, objects)
 
-	// fmt.Printf("%#v\n", objects)
+	// log.Printf("%#v\n", objects)
 
 	return *objects
 }
@@ -110,7 +110,7 @@ func ResolveValue(resolve Resolve, data *datasink.LevelData) (string, error) {
 
 			if err != nil {
 				// Log error
-				fmt.Println("error: ", err)
+				log.Println("error: ", err)
 				return ""
 			}
 

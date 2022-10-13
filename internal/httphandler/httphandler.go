@@ -2,7 +2,7 @@ package httphandler
 
 import (
 	"errors"
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -10,11 +10,11 @@ import (
 )
 
 func GetDocument(url string) (*goquery.Document, error) {
-	fmt.Println("url: ", url)
+	log.Println("url: ", url)
 	res, err := http.Get(url)
 
 	if err != nil {
-		fmt.Printf("Empty response")
+		log.Printf("Empty response")
 		return nil, err
 	}
 	defer res.Body.Close()

@@ -1,7 +1,7 @@
 package extend
 
 import (
-	"fmt"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
@@ -21,7 +21,7 @@ func (m *Mangapill) Run(doc *goquery.Document, fnName string) error {
 	} else if fnName == "page_parser" {
 		m.chapters = m.pageParser(doc)
 	} else {
-		fmt.Println("Parser missing for input: ", fnName)
+		log.Println("Parser missing for input: ", fnName)
 	}
 
 	return nil
@@ -65,8 +65,8 @@ func (m *Mangapill) chapterParser(doc *goquery.Document) datasink.Object {
 			"url":  attrVal,
 		})
 
-		// return i != 1
-		return true
+		return i != 1
+		// return true
 	})
 
 	// doc.Find("#chapters a").Each(func(i int, s *goquery.Selection) {
@@ -95,8 +95,8 @@ func (m *Mangapill) pageParser(doc *goquery.Document) datasink.Object {
 		})
 
 		// Remove later
-		// return i != 1
-		return true
+		return i != 5
+		// return true
 	})
 
 	return res

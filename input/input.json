@@ -31,7 +31,7 @@
                                 "type": "resolve",
                                 "content": "https://mangapill.com%parent.url%"
                             },
-                            "label": "pages",
+                            "label": "page",
                             "objects": {
                                 "page": {
                                     "parser": {

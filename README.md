@@ -8,41 +8,69 @@ A go web scraping framework using json configuration and other customizations to
 {
     "levels": [
         {
-            "source": "https://mangapill.com/manga/2/one-piece",
-            "label": "manga",
-            "save": {
-                "type": "directory",
-                "name": "Chapter %name%",
-                "path": "/"
+            "source": {
+                "type": "default",
+                "content": "https://mangapill.com/manga/2/one-piece"
             },
+            "label": "chapter",
             "objects": {
                 "chapter": {
-                    "name": {
+                    "parser": {
                         "selector": "custom",
-                        "value": "chapter_name_parser"
+                        "struct": "mangapill",
+                        "value": "chapter_parser"
                     },
-                    "url": {
-                        "selector": "custom",
-                        "value": "chapter_url_selector"
-                    }
-                }
-            },
-            "sort": {
-                "by": "name",
-                "order": "asc"
-            },
-            "levels": [
-                {
-                    "source": "%parent.chapter.url%",
-                    "label": "chapter",
+                    "sort": {
+                        "by": "name",
+                        "order": "asc"
+                    },
                     "save": {
-                        "type": "file",
-                        "name": "%counter%.jpg",
-                        "content": "%file_content_selector%",
-                        "path": "%parent.name%/"
-                    }
+                        "type": "directory",
+                        "path": {
+                            "type": "resolve",
+                            "content": "OnePiece/%current.name%"
+                        },
+                        "skipIfExists": true
+                    },
+                    "levels": [
+                        {
+                            "source": {
+                                "type": "resolve",
+                                "content": "https://mangapill.com%parent.url%"
+                            },
+                            "label": "page",
+                            "objects": {
+                                "page": {
+                                    "parser": {
+                                        "selector": "custom",
+                                        "struct": "mangapill",
+                                        "value": "page_parser"
+                                    },
+                                    "sort": {
+                                        "by": "page_number",
+                                        "order": "asc"
+                                    },
+                                    "save": {
+                                        "type": "file",
+                                        "name": {
+                                            "type": "resolve",
+                                            "content": "%current.name%.jpg"
+                                        },
+                                        "path": {
+                                            "type": "resolve",
+                                            "content": "OnePiece/%parent.name%/"
+                                        },
+                                        "content": {
+                                            "type": "resolve",
+                                            "content": "%current.src%"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
                 }
-            ]
+            }
         }
     ]
 }

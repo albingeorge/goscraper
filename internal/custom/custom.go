@@ -1,9 +1,7 @@
 package custom
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/albingeorge/goscraper/extend"
@@ -40,9 +38,9 @@ func Call(doc *goquery.Document, objectData reader.ObjectData) (datasink.Object,
 	res := obj.GetContent()
 
 	// Print result
-	fmt.Println("Parsed result")
-	marshalledText, _ := json.MarshalIndent(res, "", " ")
-	fmt.Println(string(marshalledText))
+	// log.Println("Parsed result")
+	// marshalledText, _ := json.MarshalIndent(res, "", " ")
+	// log.Println(string(marshalledText))
 
 	return res, nil
 }

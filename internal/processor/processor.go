@@ -1,8 +1,8 @@
 package processor
 
 import (
-	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/albingeorge/goscraper/internal/custom"
 	"github.com/albingeorge/goscraper/internal/datasink"
@@ -13,7 +13,7 @@ import (
 
 func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 	for _, level := range configLevels {
-		fmt.Println("Processing level: ", level.Label)
+		log.Println("Processing level: ", level.Label)
 
 		// Fetch source content
 		// We have not processed current object content here, hence passing nil
@@ -30,12 +30,15 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 			continue
 		}
 
-		result := map[string]datasink.Object{}
-
 		// Parse source content
 		for objName, obj := range level.Objects {
+			log.Println("Processing object: ", objName)
+
+			// Contains the data fetched from each object by parsing the document
+			var objectData datasink.Object
+
 			if obj.Parser.Selector == reader.CUSTOM {
-				result[objName], err = custom.Call(doc, obj)
+				objectData, err = custom.Call(doc, obj)
 
 				if err != nil {
 					log.Println(err)
@@ -43,20 +46,33 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 				}
 			}
 
-			for _, objeactData := range result[objName].Content {
-				childLevelData := datasink.LevelData{
-					ParentData:           dsLevelData,
-					CurrentObjectContent: objeactData,
-				}
+			objContentChan := make(chan string, 2)
 
-				// Don't process child entries of the current object
-				// if the data is already stored and SkipIfExists is set to true
-				if storage.Store(obj.Save, &childLevelData) && obj.Save.SkipIfExists {
-					continue
-				}
+			for i, objectDataContent := range objectData.Content {
+				contentName := level.Label + "-" + strconv.Itoa(i+1)
+				log.Printf("Goroutine starting: %v\n", contentName)
+				go func(dsLevelData *datasink.LevelData, obj reader.ObjectData, objectDataContent *datasink.ObjectContent, contentName string) {
+					childLevelData := datasink.LevelData{
+						ParentData:           dsLevelData,
+						CurrentObjectContent: objectDataContent,
+					}
 
-				// Call child process
-				Process(obj.Levels, &childLevelData)
+					// Don't process child entries of the current object
+					// if the data is already stored and SkipIfExists is set to true
+					if !(storage.Store(obj.Save, &childLevelData) && obj.Save.SkipIfExists) {
+						// Call child process
+						Process(obj.Levels, &childLevelData)
+					}
+
+					log.Printf("Goroutine completed: %v\n", contentName)
+
+					objContentChan <- "Done processing content"
+				}(dsLevelData, obj, objectDataContent, contentName)
+
+			}
+			log.Println("Waiting for contents to complete in object: ", objName)
+			for i := 0; i < len(objectData.Content); i++ {
+				<-objContentChan
 			}
 		}
 	}
