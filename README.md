@@ -101,3 +101,7 @@ One level can contain multiple types of data. For example, say you're fetching m
 - Manga cover which would be an image file
 
 As you can see from the above example, it's possible that for each level, you'd need multiple types of data to be fetched. Hence, we define levels as an array.
+
+## TODO
+
+- [ ] Create a global thread limit
