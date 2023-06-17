@@ -57,25 +57,25 @@ func (m *Mangapill) chapterParser(doc *goquery.Document) datasink.Object {
 	}
 
 	// Temp code to fetch only last 2 chapters
-	doc.Find("#chapters a").EachWithBreak(func(i int, s *goquery.Selection) bool {
-		attrVal, _ := s.Attr("href")
-
-		res.Content = append(res.Content, &datasink.ObjectContent{
-			"name": s.Text(),
-			"url":  attrVal,
-		})
-
-		return i != 1
-		// return true
-	})
-
-	// doc.Find("#chapters a").Each(func(i int, s *goquery.Selection) {
+	// doc.Find("#chapters a").EachWithBreak(func(i int, s *goquery.Selection) bool {
 	// 	attrVal, _ := s.Attr("href")
+
 	// 	res.Content = append(res.Content, &datasink.ObjectContent{
 	// 		"name": s.Text(),
 	// 		"url":  attrVal,
 	// 	})
+
+	// 	return i != 1
+	// 	// return true
 	// })
+
+	doc.Find("#chapters a").Each(func(i int, s *goquery.Selection) {
+		attrVal, _ := s.Attr("href")
+		res.Content = append(res.Content, &datasink.ObjectContent{
+			"name": s.Text(),
+			"url":  attrVal,
+		})
+	})
 
 	return res
 }
@@ -85,18 +85,12 @@ func (m *Mangapill) pageParser(doc *goquery.Document) datasink.Object {
 		Content: []*datasink.ObjectContent{},
 	}
 
-	doc.Find("chapter-page img").EachWithBreak(func(i int, s *goquery.Selection) bool {
-
+	doc.Find("chapter-page img").Each(func(i int, s *goquery.Selection) {
 		imgSrc, _ := s.Attr("data-src")
-
 		res.Content = append(res.Content, &datasink.ObjectContent{
 			"name": i + 1,
 			"src":  imgSrc,
 		})
-
-		// Remove later
-		return i != 5
-		// return true
 	})
 
 	return res
