@@ -24,7 +24,7 @@
                             "type": "resolve",
                             "content": "OnePiece/%current.name%"
                         },
-                        "skipIfExists": true
+                        "skipIfExists": false
                     },
                     "levels": [
                         {

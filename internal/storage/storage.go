@@ -65,7 +65,12 @@ func Store(save reader.Save, levelData *datasink.LevelData) bool {
 }
 
 func download(url string, filename string) error {
-	response, err := http.Get(url)
+	// quick fix for mangapill
+	// todo: allow custom downloaders
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	req.Header.Set("referer", "https://mangapill.com/")
+	client := &http.Client{}
+	response, err := client.Do(req)
 	if err != nil {
 		return err
 	}
