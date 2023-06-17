@@ -37,6 +37,12 @@ func Call(doc *goquery.Document, objectData reader.ObjectData) (datasink.Object,
 
 	res := obj.GetContent()
 
+	count := len(res.Content)
+	if objectData.Count > 0 {
+		count = objectData.Count
+	}
+
+	res.Content = res.Content[:count]
 	// Print result
 	// log.Println("Parsed result")
 	// marshalledText, _ := json.MarshalIndent(res, "", " ")

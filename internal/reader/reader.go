@@ -33,6 +33,7 @@ type Level struct {
 type ObjectData struct {
 	Parser Parser  `json:"parser"`
 	Sort   Sort    `json:"sort"`
+	Count  int     `json:"count"`
 	Save   Save    `json:"save"`
 	Levels []Level `json:"levels"`
 }
