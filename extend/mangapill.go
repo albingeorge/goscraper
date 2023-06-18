@@ -36,6 +36,9 @@ func (m *Mangapill) Sort(s reader.Sort) {
 			// &(m.chapters.Content[i]).
 			iName, _ := strconv.ParseFloat(strings.ReplaceAll(iContent[s.By].(string), "Chapter ", ""), 32)
 			jName, _ := strconv.ParseFloat(strings.ReplaceAll(jContent[s.By].(string), "Chapter ", ""), 32)
+			if s.Order == "asc" {
+				return iName > jName
+			}
 			return iName < jName
 		})
 	} else if s.By == "page_number" {
