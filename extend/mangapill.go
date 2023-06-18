@@ -1,7 +1,11 @@
 package extend
 
 import (
+	"fmt"
+	"io"
 	"log"
+	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,6 +18,8 @@ import (
 type Mangapill struct {
 	chapters datasink.Object
 }
+
+type MangapillDownloader struct{}
 
 func (m *Mangapill) Run(doc *goquery.Document, fnName string) error {
 	if fnName == "chapter_parser" {
@@ -33,12 +39,13 @@ func (m *Mangapill) Sort(s reader.Sort) {
 		sort.Slice(m.chapters.Content, func(i, j int) bool {
 			iContent := *(m.chapters.Content[i])
 			jContent := *(m.chapters.Content[j])
-			// &(m.chapters.Content[i]).
+
 			iName, _ := strconv.ParseFloat(strings.ReplaceAll(iContent[s.By].(string), "Chapter ", ""), 32)
 			jName, _ := strconv.ParseFloat(strings.ReplaceAll(jContent[s.By].(string), "Chapter ", ""), 32)
-			if s.Order == "asc" {
+			if s.Order == "desc" {
 				return iName > jName
 			}
+
 			return iName < jName
 		})
 	} else if s.By == "page_number" {
@@ -58,19 +65,6 @@ func (m *Mangapill) chapterParser(doc *goquery.Document) datasink.Object {
 	res := datasink.Object{
 		Content: []*datasink.ObjectContent{},
 	}
-
-	// Temp code to fetch only last 2 chapters
-	// doc.Find("#chapters a").EachWithBreak(func(i int, s *goquery.Selection) bool {
-	// 	attrVal, _ := s.Attr("href")
-
-	// 	res.Content = append(res.Content, &datasink.ObjectContent{
-	// 		"name": s.Text(),
-	// 		"url":  attrVal,
-	// 	})
-
-	// 	return i != 1
-	// 	// return true
-	// })
 
 	doc.Find("#chapters a").Each(func(i int, s *goquery.Selection) {
 		attrVal, _ := s.Attr("href")
@@ -97,4 +91,34 @@ func (m *Mangapill) pageParser(doc *goquery.Document) datasink.Object {
 	})
 
 	return res
+}
+
+func (m MangapillDownloader) Download(url string, filename string) error {
+	log.Printf("Downloading %v to %v", url, filename)
+
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	req.Header.Set("referer", "https://mangapill.com/")
+	client := &http.Client{}
+	response, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		return fmt.Errorf("received non-200 response code for url %v", url)
+	}
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,14 +1,14 @@
 package storage
 
 import (
-	"errors"
-	"io"
+	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/albingeorge/goscraper/extend"
 	"github.com/albingeorge/goscraper/internal/datasink"
+	"github.com/albingeorge/goscraper/internal/downloader"
 	"github.com/albingeorge/goscraper/internal/reader"
 )
 
@@ -56,40 +56,26 @@ func Store(save reader.Save, levelData *datasink.LevelData) bool {
 			return true
 		}
 
-		err = download(url, pathToSave)
+		downloader, err := getDownloader(save)
+		if err != nil {
+			log.Println("download failure: ", err)
+		}
+
+		err = downloader.Download(url, pathToSave)
 		if err != nil {
 			log.Println("download failure: ", err)
 		}
 	}
+
 	return false
 }
 
-func download(url string, filename string) error {
-	// quick fix for mangapill
-	// todo: allow custom downloaders
-	req, _ := http.NewRequest(http.MethodGet, url, nil)
-	req.Header.Set("referer", "https://mangapill.com/")
-	client := &http.Client{}
-	response, err := client.Do(req)
-	if err != nil {
-		return err
+func getDownloader(save reader.Save) (downloader.Downloader, error) {
+	switch save.Downloader {
+	case "mangapill":
+		return extend.MangapillDownloader{}, nil
+	case "":
+		return downloader.DefaultDownloader{}, nil
 	}
-	defer response.Body.Close()
-
-	if response.StatusCode != 200 {
-		return errors.New("received non-200 response code")
-	}
-
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = io.Copy(file, response.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return nil, fmt.Errorf("invalid downloader: %v", save.Downloader)
 }

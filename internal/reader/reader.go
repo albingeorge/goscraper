@@ -61,6 +61,7 @@ type Save struct {
 	Path         Resolve `json:"path"`
 	Content      Resolve `json:"content"`
 	SkipIfExists bool    `json:"skipIfExists"`
+	Downloader   string  `json:"downloader"`
 }
 
 type Resolve struct {

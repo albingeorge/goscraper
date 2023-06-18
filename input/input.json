@@ -58,7 +58,9 @@
                                         "content": {
                                             "type": "resolve",
                                             "content": "%current.src%"
-                                        }
+                                        },
+                                        "downloader": "mangapill",
+                                        "skipIfExists": true
                                     }
                                 }
                             }

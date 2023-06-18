@@ -59,6 +59,7 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData) {
 
 					// Don't process child entries of the current object
 					// if the data is already stored and SkipIfExists is set to true
+					// todo: refactor this, so that it checks if the file/directory exists before attempting to store it first
 					if !(storage.Store(obj.Save, &childLevelData) && obj.Save.SkipIfExists) {
 						// Call child process
 						Process(obj.Levels, &childLevelData)
