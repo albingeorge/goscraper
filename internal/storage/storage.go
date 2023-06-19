@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/albingeorge/goscraper/extend"
+	"github.com/albingeorge/goscraper/internal/custom"
 	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/downloader"
 	"github.com/albingeorge/goscraper/internal/reader"
@@ -74,6 +75,8 @@ func getDownloader(save reader.Save) (downloader.Downloader, error) {
 	switch save.Downloader {
 	case "mangapill":
 		return extend.MangapillDownloader{}, nil
+	case "delayed":
+		return custom.DelayedDownloaderImplementation{}, nil
 	case "":
 		return downloader.DefaultDownloader{}, nil
 	}

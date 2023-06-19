@@ -43,10 +43,6 @@ func Call(doc *goquery.Document, objectData reader.ObjectData) (datasink.Object,
 	}
 
 	res.Content = res.Content[:count]
-	// Print result
-	// log.Println("Parsed result")
-	// marshalledText, _ := json.MarshalIndent(res, "", " ")
-	// log.Println(string(marshalledText))
 
 	return res, nil
 }
@@ -54,6 +50,10 @@ func Call(doc *goquery.Document, objectData reader.ObjectData) (datasink.Object,
 func getCustomObject(variable reader.Parser) (Custom, error) {
 	if variable.Struct == "mangapill" {
 		return &extend.Mangapill{}, nil
+	}
+
+	if variable.Struct == "delayed" {
+		return &DelayedImplementation{}, nil
 	}
 
 	return nil, errors.New("No custom implementation found for " + variable.Struct)

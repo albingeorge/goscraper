@@ -17,7 +17,7 @@
                         "by": "name",
                         "order": "asc"
                     },
-                    "count": 5,
+                    "count": 3,
                     "save": {
                         "type": "directory",
                         "path": {
@@ -44,7 +44,7 @@
                                         "by": "page_number",
                                         "order": "asc"
                                     },
-                                    "count": 5,
+                                    "count": 2,
                                     "save": {
                                         "type": "file",
                                         "name": {
