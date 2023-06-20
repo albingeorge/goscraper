@@ -4,10 +4,12 @@ import (
 	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/processor"
 	"github.com/albingeorge/goscraper/internal/reader"
+	"github.com/albingeorge/goscraper/pkg/log"
 )
 
 func main() {
-	objects := reader.Read()
+	log := log.InitializeLogger()
+	objects := reader.Read(log)
 
-	processor.Process(objects.Levels, &datasink.LevelData{})
+	processor.Process(objects.Levels, &datasink.LevelData{}, log)
 }

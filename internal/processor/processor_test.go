@@ -2,16 +2,15 @@ package processor
 
 import (
 	"encoding/json"
-	"io"
-	"log"
 	"testing"
 
 	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/reader"
+	"go.uber.org/zap"
 )
 
 func BenchmarkProcess(b *testing.B) {
-	log.SetOutput(io.Discard)
+	// log.SetOutput(io.Discard)
 	levelStr := `{
 		"source": {
 			"type": "default",
@@ -29,7 +28,7 @@ func BenchmarkProcess(b *testing.B) {
 					"by": "name",
 					"order": "asc"
 				},
-				"count": 0,
+				"count": 2,
 				"save": {
 					"type": "directory",
 					"path": {
@@ -87,9 +86,10 @@ func BenchmarkProcess(b *testing.B) {
 		levelVal,
 	}
 
+	log, _ := zap.NewDevelopment()
 	dsLevelData := datasink.LevelData{}
 	for i := 0; i < b.N; i++ {
-		Process(levels, &dsLevelData)
+		Process(levels, &dsLevelData, log.Sugar())
 	}
 
 }

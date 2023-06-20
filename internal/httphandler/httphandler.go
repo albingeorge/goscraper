@@ -1,10 +1,9 @@
 package httphandler
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -20,7 +19,7 @@ func GetDocument(url string) (*goquery.Document, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, errors.New("invalid http status: " + strconv.Itoa(res.StatusCode))
+		return nil, fmt.Errorf("invalid http status on url: ", url)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)

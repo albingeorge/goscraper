@@ -2,7 +2,6 @@ package storage
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/albingeorge/goscraper/internal/datasink"
 	"github.com/albingeorge/goscraper/internal/downloader"
 	"github.com/albingeorge/goscraper/internal/reader"
+	"go.uber.org/zap"
 )
 
 const BASE = "./output"
@@ -19,11 +19,11 @@ const PATH_SEPARATOR = "/"
 
 // Stores the data fetched for each object content
 // Returns bool representing whether the data is already stored
-func Store(save reader.Save, levelData *datasink.LevelData) bool {
-	log.Println("Storing data in: ", save.Type)
-	pathToSave, err := reader.ResolveValue(save.Path, levelData)
+func Store(save reader.Save, levelData *datasink.LevelData, log *zap.SugaredLogger) bool {
+	log.Debugf("Storing data in: %v", save.Type)
+	pathToSave, err := reader.ResolveValue(save.Path, levelData, log)
 	if err != nil {
-		log.Println("Storage path resolve failure")
+		log.Errorf("Storage path resolve failure: %w", err)
 	}
 
 	pathToSave = strings.Join([]string{BASE, pathToSave}, PATH_SEPARATOR)
@@ -37,20 +37,20 @@ func Store(save reader.Save, levelData *datasink.LevelData) bool {
 	err = os.MkdirAll(pathToSave, os.ModePerm)
 
 	if err != nil {
-		log.Println("error creating directory: ", pathToSave)
+		log.Errorf("error creating directory: %v", pathToSave)
 	}
 
 	if save.Type == reader.STORAGE_FILE {
-		fileName, err := reader.ResolveValue(save.Name, levelData)
+		fileName, err := reader.ResolveValue(save.Name, levelData, log)
 		if err != nil {
-			log.Println("File name resolve failure")
+			log.Error("File name resolve failure")
 		}
 
 		pathToSave += fileName
 
-		url, err := reader.ResolveValue(save.Content, levelData)
+		url, err := reader.ResolveValue(save.Content, levelData, log)
 		if err != nil {
-			log.Println("Download url resolve failure")
+			log.Error("Download url resolve failure")
 		}
 
 		if _, err := os.Stat(pathToSave); !os.IsNotExist(err) {
@@ -59,12 +59,12 @@ func Store(save reader.Save, levelData *datasink.LevelData) bool {
 
 		downloader, err := getDownloader(save)
 		if err != nil {
-			log.Println("download failure: ", err)
+			log.Errorf("downloader not found: %w", err)
 		}
 
 		err = downloader.Download(url, pathToSave)
 		if err != nil {
-			log.Println("download failure: ", err)
+			log.Errorf("download failure: %w", err)
 		}
 	}
 

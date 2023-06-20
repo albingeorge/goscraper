@@ -3,13 +3,13 @@ package reader
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"os"
 	"reflect"
 	"regexp"
 	"strconv"
 
 	"github.com/albingeorge/goscraper/internal/datasink"
+	"go.uber.org/zap"
 )
 
 type Levels struct {
@@ -79,7 +79,7 @@ const STORAGE_FILE = "file"
 
 // Handles read of in the input config file
 // Reads from input/input.json
-func Read() Levels {
+func Read(log *zap.SugaredLogger) Levels {
 	file, err := os.Open("input/input.json")
 	if err != nil {
 		panic("error reading input file")
@@ -99,7 +99,7 @@ func Read() Levels {
 }
 
 // Resolve a value
-func ResolveValue(resolve Resolve, data *datasink.LevelData) (string, error) {
+func ResolveValue(resolve Resolve, data *datasink.LevelData, log *zap.SugaredLogger) (string, error) {
 	result := resolve.Content
 
 	if resolve.Type == RESOLVE_TYPE {
@@ -111,8 +111,7 @@ func ResolveValue(resolve Resolve, data *datasink.LevelData) (string, error) {
 			res, err := datasink.FindValue(input, data)
 
 			if err != nil {
-				// Log error
-				log.Println("error: ", err)
+				log.Errorf("error finding value in datasink: %v", err)
 				return ""
 			}
 
