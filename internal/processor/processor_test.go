@@ -16,9 +16,9 @@ func BenchmarkProcess(b *testing.B) {
 			"type": "default",
 			"content": "https://mangapill.com/manga/2/one-piece"
 		},
-		"label": "chapter",
+		"label": "chapter-list",
 		"objects": {
-			"chapter": {
+			"chapters": {
 				"parser": {
 					"selector": "custom",
 					"struct": "delayed",
@@ -43,9 +43,9 @@ func BenchmarkProcess(b *testing.B) {
 							"type": "resolve",
 							"content": "https://mangapill.com%parent.url%"
 						},
-						"label": "page",
+						"label": "page-list",
 						"objects": {
-							"page": {
+							"pages": {
 								"parser": {
 									"selector": "custom",
 									"struct": "delayed",
@@ -85,11 +85,29 @@ func BenchmarkProcess(b *testing.B) {
 	levels := []reader.Level{
 		levelVal,
 	}
-
-	log, _ := zap.NewDevelopment()
 	dsLevelData := datasink.LevelData{}
 	for i := 0; i < b.N; i++ {
-		Process(levels, &dsLevelData, log.Sugar())
+		Process(levels, &dsLevelData, getSugaredLogger())
 	}
 
+}
+
+func getSugaredLogger() *zap.SugaredLogger {
+	rawJSON := []byte(`{
+		"level": "debug",
+		"encoding": "json",
+		"outputPaths": ["stdout"],
+		"errorOutputPaths": ["stderr"],
+		"encoderConfig": {
+		  "messageKey": "message",
+		  "levelKey": "level",
+		  "levelEncoder": "lowercase"
+		}
+	  }`)
+	var cfg zap.Config
+	if err := json.Unmarshal(rawJSON, &cfg); err != nil {
+		panic(err)
+	}
+	logger, _ := cfg.Build()
+	return logger.Sugar()
 }

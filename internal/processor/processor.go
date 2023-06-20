@@ -24,7 +24,7 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData, log *
 			continue
 		}
 
-		doc, err := httphandler.GetDocument(sourceUrl)
+		doc, err := httphandler.GetDocument(log, sourceUrl)
 		if err != nil {
 			log.Errorf("Error fetching document: %w", err)
 			continue
@@ -71,6 +71,7 @@ func Process(configLevels []reader.Level, dsLevelData *datasink.LevelData, log *
 				}(dsLevelData, obj, objectDataContent, contentName)
 
 			}
+
 			log.Debugf("Waiting for contents to complete in object: %v", objName)
 			for i := 0; i < len(objectData.Content); i++ {
 				<-objContentChan

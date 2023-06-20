@@ -20,7 +20,11 @@ const PATH_SEPARATOR = "/"
 // Stores the data fetched for each object content
 // Returns bool representing whether the data is already stored
 func Store(save reader.Save, levelData *datasink.LevelData, log *zap.SugaredLogger) bool {
-	log.Debugf("Storing data in: %v", save.Type)
+	log.With(
+		"type", save.Type,
+		"path", save.Path,
+	).Debugf("Storing data")
+
 	pathToSave, err := reader.ResolveValue(save.Path, levelData, log)
 	if err != nil {
 		log.Errorf("Storage path resolve failure: %w", err)
